@@ -1,5 +1,7 @@
 # ScalaTime - experiment
 
+![TravisCI](https://travis-ci.org/skytteren/scalatime.svg?branch=master)
+
 Playing around with a basic time API for Scala and Scala JS.
 The java.time API works well on the JVM, but on JS platform it is rather limited without extra libraries.
 This code is based on a need to have one basic library across the platforms. 
