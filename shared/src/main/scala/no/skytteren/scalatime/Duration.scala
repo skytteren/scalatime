@@ -14,9 +14,11 @@ object Months extends (Int => Months){
 }
 case class Days(value: Long){
   def unary_- = Days(-value)
+
+  def - (other: Days) = Days(value - other.value)
 }
 object Days extends (Long => Days) {
-  implicit val numeric: Numeric[Days] = BiNumeric.numeric[Days, Long](_.value, Days)
+  implicit val numericDays: Numeric[Days] = BiNumeric.numeric[Days, Long](_.value, Days)
 
   def apply(value: Int): Days = new Days(value)
 }

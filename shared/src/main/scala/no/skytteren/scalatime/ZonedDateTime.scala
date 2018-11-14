@@ -1,5 +1,7 @@
 package no.skytteren.scalatime
 
+import scala.util.Try
+
 case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: DayOfMonth = DayOfMonth(1),
                     hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second = Second(0), millisecond: Millisecond = Millisecond(0),
                        offset: Offset = Offset.Z) {
@@ -15,7 +17,7 @@ case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMon
   def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
         hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)
        ): ZonedDateTime = {
-    import Days.numeric._
+    import Days.numericDays._
 
     val (extraDays, Time(hour, minute, second, millisecond)) = this.toTime plusOverflow (hours, minutes, seconds, milliseconds)
     val Date(year, month, dayOfMonth) = this.toDate + (years, months, days + extraDays)
@@ -56,6 +58,6 @@ object ZonedDateTime extends ((Year, Month, DayOfMonth, Hour, Minute, Second, Mi
 
   def apply(date: Date, time: Time, offset: Offset): ZonedDateTime = new ZonedDateTime(date.year, date.month, date.dayOfMonth, time.hour, time.minute, time.second, time.millisecond, offset)
 
-  def parse(in: String)(implicit parser: ZonedDateTimeParser) = parser.parse(in)
+  def parse(in: String)(implicit parser: ZonedDateTimeParser): Try[ZonedDateTime] = parser.parse(in)
 
 }

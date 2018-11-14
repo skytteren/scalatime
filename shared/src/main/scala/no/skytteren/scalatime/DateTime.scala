@@ -16,7 +16,7 @@ case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: D
   def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
         hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)
        ): DateTime = {
-    import Days.numeric._
+    import Days.numericDays._
 
     val (extraDays, Time(hour, minute, second, millisecond)) = this.toTime plusOverflow (hours, minutes, seconds, milliseconds)
     val Date(year, month, dayOfMonth) = this.toDate + (years, months, days + extraDays)
@@ -33,6 +33,10 @@ case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: D
   def -(duration: Duration): DateTime = {
     import duration._
     this - (years, months, days, hours, minutes, seconds, milliseconds)
+  }
+
+  def isBefore(other: DateTime) = {
+
   }
 
   def year(year: Year): DateTime = copy(year = year)

@@ -8,6 +8,10 @@ case class Year(value: Int) extends AnyVal {
   }
 }
 
+object Year extends (Int => Year) {
+  implicit val numericYear: Numeric[Year] = BiNumeric.numeric[Year, Int](_.value, Year)
+}
+
 sealed abstract class Month(val value: Int, val daysInMonth: Year => Days)  {
   require(value >= 1 && value <= 12, s"Month must be in the range [1, 12], but was $value")
 
@@ -15,6 +19,9 @@ sealed abstract class Month(val value: Int, val daysInMonth: Year => Days)  {
 }
 
 object Month extends (Int => Month) {
+
+  implicit val numericMonth: Numeric[Month] = BiNumeric.numeric[Month, Int](_.value, Month)
+
   case class NotFound(value: Int) extends Exception
 
   case object January extends Month(1, _ => Days(31))
@@ -45,6 +52,9 @@ object Month extends (Int => Month) {
 
 case class DayOfMonth(value: Int)  {
   require(value >= 1 && value <= 31, s"DayOfMonth must be in the range [1, 31], but was $value")
+}
+object DayOfMonth extends (Int => DayOfMonth) {
+  implicit val numericDayOfMonth: Numeric[DayOfMonth] = BiNumeric.numeric[DayOfMonth, Int](_.value, DayOfMonth)
 }
 
 sealed abstract class DayOfWeek(val value: Int)  {
@@ -89,14 +99,14 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
     this + (years, months, days)
   }
 
-  private[scalatime] def toDays(): Days = {
+  private[scalatime] def toDays: Days = {
     val m : Long = (month.value + 9) % 12
     val y : Long = year.value - m / 10
     Days(365 * y + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (dayOfMonth.value - 1))
   }
 
   def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0)): Date = {
-    import Days.numeric._
+    import Days.numericDays._
 
     val (y, m, d) = Date.toDate(toDays + days)
 
@@ -118,6 +128,11 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
     import duration._
     this - (years, months, days)
   }
+
+  def < (other: Date): Boolean = Date.DateOrdering.lt(this, other)
+  def > (other: Date): Boolean = Date.DateOrdering.gt(this, other)
+
+  def until(other: Date): Days = other.toDays - this.toDays
 
   def year(year: Year): Date = copy(year = year)
   def month(month: Month): Date = copy(month = month)
@@ -142,6 +157,10 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
 }
 
 object Date extends ((Year, Month, DayOfMonth) => Date){
+
+  implicit object DateOrdering extends Ordering[Date] {
+    override def compare(x: Date, y: Date): Int = Days.numericDays.compare(x.toDays, y.toDays)
+  }
 
   def parse(in: String)(implicit dateParser: DateParser): Try[Date] = dateParser.parse(in)
 

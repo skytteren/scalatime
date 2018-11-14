@@ -62,7 +62,7 @@ class DateTest extends FunSuite{
       i <- 0L.until(100000000, 12345)
     } {
       val date = Date.toDate(Days(i))
-      assert(Days(i) === Date.tupled.apply(date).toDays())
+      assert(Days(i) === Date.tupled.apply(date).toDays)
     }
   }
 
@@ -84,6 +84,12 @@ class DateTest extends FunSuite{
   test("Parse date - compact") {
     val date = Date.parse("20181109").get
     assert(date === Date(Year(2018), Month(11), DayOfMonth(9)))
+  }
+
+  test("Date compare") {
+    import Ordering.Implicits._
+    val start = Date(Year(2018), Month(11), DayOfMonth(8))
+    assert(start < Date(Year(2018), Month(11), DayOfMonth(9)))
   }
 
 }
