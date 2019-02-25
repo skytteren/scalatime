@@ -139,17 +139,10 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
   def dayOfMonth(dayOfMonth: DayOfMonth): Date = copy(dayOfMonth = dayOfMonth)
 
   def dayOfWeek: DayOfWeek = {
-    val(y, m) = month.value match {
-      case 1 =>
-        (year.value - 1, 13)
-      case 2 =>
-        (year.value - 1, 13)
-      case i => (year.value, i)
-    }
-    val j: Int = y / 100
-    val k: Int = y % 100
-    val h: Int = (dayOfMonth.value + 13 * (m + 1) / 5 + k + (k / 4) + (j / 4) + (5 * j)) % 7
-    DayOfWeek(((h+5) % 7)+1)
+    val a: Int = (14 - month.value) / 12
+    val y: Int = year.value + 4800 - a
+    val m: Int = month.value + 12 * a - 3
+    DayOfWeek((dayOfMonth.value + (153*m + 2)/5 + 365*y + y/4 - y/100 + y/400 + 1) % 7 + 1)
   }
 
   def format(implicit formater: DateFormat): String = formater.format(this)

@@ -67,11 +67,13 @@ class DateTest extends FunSuite{
   }
 
   test("day of week") {
-    val dayOfWeek = Date(Year(2018), Month(11), DayOfMonth(9)).dayOfWeek
-    assert(dayOfWeek === DayOfWeek.Friday)
-    
-    val dayOfWeek2 = Date(Year(2019), Month(5), DayOfMonth(10)).dayOfWeek
-    assert(dayOfWeek2 === DayOfWeek.Friday)
+    val start = Date(Year(2018), Month(11), DayOfMonth(12))
+    for{
+      i <- 0 until 1000
+    } {
+      val date = start + (days = Days(i))
+      assert(date.dayOfWeek === DayOfWeek(i % 7 + 1))
+    }
   }
 
   test("date format") {
