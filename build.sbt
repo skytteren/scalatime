@@ -1,5 +1,9 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
+enablePlugins(GitVersioning)
+enablePlugins(GitBranchPrompt)
+
+git.uncommittedSignifier := Some("DIRTY")
 
 lazy val scalatime = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/).in(file("."))
   .settings(
