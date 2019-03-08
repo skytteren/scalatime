@@ -125,4 +125,9 @@ class ZonedDateTimeTest extends FunSuite{
     assert(date === ZonedDateTime(Year(2018), Month(11), DayOfMonth(9), Hour(12), Minute(13), Second(14), Millisecond(678), Offset(Hours(-10))))
   }
 
+  test("epoch") {
+    val date = ZonedDateTime.parse("20181109T12:13:14.678Z").get.millisecond(Millisecond(0))
+    assert(date === ZonedDateTime.fromEpochSecond(date.toEpochSecond))
+  }
+
 }

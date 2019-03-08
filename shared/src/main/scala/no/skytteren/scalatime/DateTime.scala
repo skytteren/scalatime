@@ -35,8 +35,8 @@ case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: D
     this - (years, months, days, hours, minutes, seconds, milliseconds)
   }
 
-  def isBefore(other: DateTime) = {
-
+  def < (to: DateTime): Boolean = {
+    (toDate < to.toDate) || ((toDate == to.toDate) && (toTime < to.toTime))
   }
 
   def year(year: Year): DateTime = copy(year = year)
@@ -50,6 +50,10 @@ case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: D
   def toDate: Date = Date(year, month, dayOfMonth)
   def toTime: Time = Time(hour, minute, second, millisecond)
 
+  def toEpochSecond(implicit offset: Offset = Offset.Z): Seconds = {
+    ZonedDateTime(this, offset).toEpochSecond
+  }
+
 }
 
 object DateTime extends ((Year, Month, DayOfMonth, Hour, Minute, Second, Millisecond) => DateTime) {
@@ -57,5 +61,10 @@ object DateTime extends ((Year, Month, DayOfMonth, Hour, Minute, Second, Millise
   def apply(date: Date, time: Time): DateTime = new DateTime(date.year, date.month, date.dayOfMonth, time.hour, time.minute, time.second, time.millisecond)
 
   def parse(in: String)(implicit dateTimeParser: DateTimeParser) : Try[DateTime] = dateTimeParser.parse(in)
+
+  def MAX: DateTime = DateTime(Date.MAX, Time.MAX)
+  def MIN: DateTime =  DateTime(Date.MIN, Time.MIN)
+
+  implicit val datatimeOrdering: Ordering[DateTime] = Ordering.by(_.toEpochSecond())
 
 }

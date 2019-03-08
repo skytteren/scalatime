@@ -15,4 +15,14 @@ package object scalatime {
       new Time(Hour(jTime.getHours), Minute(jTime.getMinutes), Second(jTime.getSeconds), Millisecond(jTime.getMilliseconds()))
     }
   }
+
+  implicit class DateTimePimp(dateTime: DateTime.type) {
+    def now(): DateTime = {
+      val jDateTime = new scalajs.js.Date()
+      new DateTime(
+        Year(jDateTime.getFullYear()), Month(jDateTime.getMonth() + 1), DayOfMonth(jDateTime.getDate()),
+        Hour(jDateTime.getHours), Minute(jDateTime.getMinutes), Second(jDateTime.getSeconds), Millisecond(jDateTime.getMilliseconds())
+      )
+    }
+  }
 }

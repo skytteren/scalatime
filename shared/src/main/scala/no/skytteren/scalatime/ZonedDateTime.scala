@@ -5,6 +5,7 @@ import scala.util.Try
 case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: DayOfMonth = DayOfMonth(1),
                     hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second = Second(0), millisecond: Millisecond = Millisecond(0),
                        offset: Offset = Offset.Z) {
+
   def isLeapYear: Boolean = year.isLeapYear
 
   def format(implicit formater: ZonedDateTimeFormat): String = formater.format(this)
@@ -24,7 +25,6 @@ case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMon
 
     ZonedDateTime(year, month, dayOfMonth, hour, minute, second, millisecond, offset)
   }
-
 
   def -(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
         hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)): ZonedDateTime = {
@@ -52,11 +52,27 @@ case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMon
 
   def toDateTime: DateTime = DateTime(year, month, dayOfMonth, hour, minute, second, millisecond)
 
+  def toEpochSecond: Seconds = {
+    import Numeric.Implicits._
+    val daysSeconds = (toDate.toDays - ZonedDateTime.epochStart.toDate.toDays).toSeconds
+    val daySeconds = Seconds(hour.value * 60 * 60 + minute.value * 60 + second.value)
+    daysSeconds + daySeconds
+  }
+
 }
 
 object ZonedDateTime extends ((Year, Month, DayOfMonth, Hour, Minute, Second, Millisecond, Offset) => ZonedDateTime) {
 
-  def apply(date: Date, time: Time, offset: Offset): ZonedDateTime = new ZonedDateTime(date.year, date.month, date.dayOfMonth, time.hour, time.minute, time.second, time.millisecond, offset)
+  val epochStart = ZonedDateTime(Year(1970))
+
+  def fromEpochSecond(seconds: Seconds): ZonedDateTime = {
+    epochStart + (seconds = seconds)
+  }
+
+  def apply(date: Date, time: Time, offset: Offset): ZonedDateTime =
+    new ZonedDateTime(date.year, date.month, date.dayOfMonth, time.hour, time.minute, time.second, time.millisecond, offset)
+  def apply(dateTime: DateTime, offset: Offset): ZonedDateTime =
+    new ZonedDateTime(dateTime.year, dateTime.month, dateTime.dayOfMonth, dateTime.hour, dateTime.minute, dateTime.second, dateTime.millisecond, offset)
 
   def parse(in: String)(implicit parser: ZonedDateTimeParser): Try[ZonedDateTime] = parser.parse(in)
 

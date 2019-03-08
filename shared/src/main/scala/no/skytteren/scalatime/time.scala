@@ -3,17 +3,62 @@ package no.skytteren.scalatime
 import scala.util.Try
 
 
-case class Hour(value: Int) {
+case class Hour(value: Short) {
   require( value >= 0 && value < 24, s"Hour must be in the range [0, 23], but was $value")
+
+  def < (to: Hour): Boolean = value < to.value
+  def <= (to: Hour): Boolean = !(value > to.value)
+
+  def > (to: Hour): Boolean = value > to.value
+  def >= (to: Hour): Boolean = !(value < to.value)
 }
+object Hour extends (Short => Hour) {
+  def apply(value: Int): Hour = new Hour(value.toShort)
+  def apply(value: Long): Hour = new Hour(value.toShort)
+}
+
 case class Minute(value: Int) {
   require( value >= 0 && value < 60, s"Minute must be in the range [0, 59], but was $value")
+
+  def < (to: Minute): Boolean = value < to.value
+  def <= (to: Minute): Boolean = !(value > to.value)
+
+  def > (to: Minute): Boolean = value > to.value
+  def >= (to: Minute): Boolean = !(value < to.value)
 }
+object Minute extends (Short => Minute) {
+  override def apply(value: Short): Minute = new Minute(value)
+  def apply(value: Int): Minute = new Minute(value.toShort)
+  def apply(value: Long): Minute = new Minute(value.toShort)
+}
+
 case class Second(value: Int) {
   require( value >= 0 && value < 60, s"Second must be in the range [0, 59], but was $value")
+
+  def < (to: Second): Boolean = value < to.value
+  def <= (to: Second): Boolean = !(value > to.value)
+  def > (to: Second): Boolean = value > to.value
+  def >= (to: Second): Boolean = !(value < to.value)
 }
+object Second extends (Short => Second) {
+  override def apply(value: Short): Second = new Second(value)
+  def apply(value: Int): Second = new Second(value.toShort)
+  def apply(value: Long): Second = new Second(value.toShort)
+}
+
 case class Millisecond(value: Int) {
   require( value >= 0 && value < 1000, s"Millisecond must be in the range [0, 999], but was $value")
+
+  def < (to: Millisecond): Boolean = value < to.value
+  def <= (to: Millisecond): Boolean = !(value > to.value)
+
+  def > (to: Millisecond): Boolean = value > to.value
+  def >= (to: Millisecond): Boolean = !(value < to.value)
+}
+object Millisecond extends (Short => Millisecond) {
+  override def apply(value: Short): Millisecond = new Millisecond(value)
+  def apply(value: Int): Millisecond = new Millisecond(value.toShort)
+  def apply(value: Long): Millisecond = new Millisecond(value.toShort)
 }
 
 case class Time(hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second = Second(0), millisecond: Millisecond = Millisecond(0)){
@@ -56,6 +101,22 @@ case class Time(hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second
     this - (hours, minutes, seconds, milliseconds)
   }
 
+  def < (to: Time): Boolean = {
+    (hour < to.hour) || (
+      (hour == to.hour) && (
+        (minute < to.minute) || (
+          (minute == to.minute) && (
+            (second < to.second) || (
+              (second == to.second) && (
+                millisecond < to.millisecond
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
   def hour(hour: Hour): Time = copy(hour = hour)
   def minute(minute: Minute): Time = copy(minute = minute)
   def second(second: Second): Time = copy(second = second)
@@ -68,4 +129,7 @@ object Time extends ((Hour, Minute, Second, Millisecond) => Time) {
   def startOfDay: Time = Time()
 
   def parse(in: String)(implicit timeParser: TimeParser): Try[Time] = timeParser.parse(in)
+
+  def MAX = Time(hour = Hour(23), minute = Minute(59), second = Second(59), millisecond = Millisecond(999))
+  def MIN = Time(hour = Hour(0), minute = Minute(0), second = Second(0), millisecond = Millisecond(0))
 }

@@ -1,18 +1,53 @@
 package no.skytteren
 
+import java.time.LocalDateTime
+
 package object scalatime {
 
-  implicit class DatePimp(date: Date.type) {
+  implicit class TimePimp(from: Time) {
+    def toJavaLocalTime: java.time.LocalTime = java.time.LocalTime.of(from.hour.value, from.minute.value, from.second.value, from.millisecond.value * 1000000)
+  }
+  implicit class TimeObjectPimp(time: Time.type) {
+    def now(): Time = java.time.LocalTime.now().toTime
+  }
+
+  implicit class DatePimp(date: Date){
+    def toJavaLocalDate: java.time.LocalDate = java.time.LocalDate.of(date.year.value.toInt, date.month.value, date.dayOfMonth.value)
+  }
+  implicit class DateObjectPimp(date: Date.type) {
     def now(): Date = {
       val jDate = java.time.LocalDate.now()
       new Date(Year(jDate.getYear), Month(jDate.getMonthValue), DayOfMonth(jDate.getDayOfMonth))
     }
   }
 
-  implicit class TimePimp(time: Time.type) {
-    def now(): Time = {
-      val jTime = java.time.LocalTime.now()
-      new Time(Hour(jTime.getHour), Minute(jTime.getMinute), Second(jTime.getSecond), Millisecond(jTime.getNano / 1000000))
+  implicit class DateTimePimp(datetime: DateTime) {
+    def toJavaLocalDateTime: LocalDateTime = {
+      LocalDateTime.of(
+        datetime.year.value.toInt, datetime.month.value, datetime.dayOfMonth.value,
+        datetime.hour.value, datetime.minute.value, datetime.second.value, datetime.millisecond.value * 1000000
+      )
     }
   }
+  implicit class DateTimeObjectPimp(dateTime: DateTime.type) {
+    def now(): DateTime = LocalDateTime.now().toDateTime
+  }
+
+  implicit class LocalTimePimp(in: java.time.LocalTime) {
+    def toTime: Time = Time(Hour(in.getHour), Minute(in.getMinute), Second(in.getSecond), Millisecond(in.getNano / 1000000))
+  }
+
+  implicit class LocalDatePimp(in: java.time.LocalDate) {
+    def toDate: Date = Date(
+        Year(in.getYear), Month(in.getMonthValue), DayOfMonth(in.getDayOfMonth),
+    )
+  }
+
+  implicit class LocalDateTimePimp(in: LocalDateTime) {
+    def toDateTime: DateTime = DateTime(
+        Year(in.getYear), Month(in.getMonthValue), DayOfMonth(in.getDayOfMonth),
+        Hour(in.getHour), Minute(in.getMinute), Second(in.getSecond), Millisecond(in.getNano / 1000000)
+    )
+  }
+
 }

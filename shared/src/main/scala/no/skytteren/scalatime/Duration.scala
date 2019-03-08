@@ -1,45 +1,60 @@
 package no.skytteren.scalatime
 
-case class Years(value: Int){
+case class Years(value: Long){
   def unary_- = Years(-value)
 }
-object Years extends (Int => Years) {
-  implicit val numeric: Numeric[Years] = BiNumeric.numeric[Years, Int](_.value, Years)
+object Years extends (Long => Years) {
+  implicit val numeric: Numeric[Years] = BiNumeric.numeric[Years, Long](_.value, Years)
 }
-case class Months(value: Int){
+case class Months(value: Long){
   def unary_- = Months(-value)
 }
-object Months extends (Int => Months){
-  implicit val numeric: Numeric[Months] = BiNumeric.numeric[Months, Int](_.value, Months)
+object Months extends (Long => Months){
+  implicit val numeric: Numeric[Months] = BiNumeric.numeric[Months, Long](_.value, Months)
 }
 case class Days(value: Long){
   def unary_- = Days(-value)
 
   def - (other: Days) = Days(value - other.value)
+
+  def toSeconds: Seconds = Seconds(value * 24 * 60 * 60)
 }
 object Days extends (Long => Days) {
   implicit val numericDays: Numeric[Days] = BiNumeric.numeric[Days, Long](_.value, Days)
 
-  def apply(value: Int): Days = new Days(value)
+  def apply(value: Long): Days = new Days(value)
 }
 
-case class Hours(value: Int){
+case class Hours(value: Long){
   def unary_- = Hours(-value)
+  def toSeconds: Seconds = Seconds(value * 60 * 60)
+
 }
-object Hours extends (Int => Hours) {
-  implicit val hoursNumeric = BiNumeric.numeric[Hours, Int](_.value, Hours)
+object Hours extends (Long => Hours) {
+  implicit val hoursNumeric = BiNumeric.numeric[Hours, Long](_.value, Hours)
 }
-case class Minutes(value: Int){
+case class Minutes(value: Long){
   def unary_- = Minutes(-value)
+
+  def toSeconds: Seconds = Seconds(value * 60)
 }
-object Minutes extends (Int => Minutes) {
-  implicit val minutesNumeric = BiNumeric.numeric[Minutes, Int](_.value, Minutes)
+object Minutes extends (Long => Minutes) {
+  implicit val minutesNumeric = BiNumeric.numeric[Minutes, Long](_.value, Minutes)
 }
-case class Seconds(value: Int){
+
+case class Seconds(value: Long){
   def unary_- = Seconds(-value)
 }
-case class Milliseconds(value: Int){
+object Seconds extends (Long => Seconds) {
+  implicit val secondsNumeric = BiNumeric.numeric[Seconds, Long](_.value, Seconds)
+}
+
+case class Milliseconds(value: Long){
   def unary_- = Milliseconds(-value)
+}
+
+object Milliseconds extends (Long => Milliseconds) {
+  implicit val millisecondsNumeric = BiNumeric.numeric[Milliseconds, Long](_.value, Milliseconds)
 }
 
 case class Duration(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
@@ -50,13 +65,13 @@ case class Duration(years: Years = Years(0), months: Months = Months(0), days: D
 
 object Duration{
 
-  def years(years: Int): Duration = new Duration(years = Years(years))
-  def months(months: Int): Duration = new Duration(months = Months(months))
-  def days(days: Int): Duration = new Duration(days = Days(days))
-  def hours(hours: Int): Duration = new Duration(hours = Hours(hours))
-  def minutes(minutes: Int): Duration = new Duration(minutes = Minutes(minutes))
-  def seconds(seconds: Int): Duration = new Duration(seconds = Seconds(seconds))
-  def milliseconds(milliseconds: Int): Duration = new Duration(milliseconds = Milliseconds(milliseconds))
+  def years(years: Long): Duration = new Duration(years = Years(years))
+  def months(months: Long): Duration = new Duration(months = Months(months))
+  def days(days: Long): Duration = new Duration(days = Days(days))
+  def hours(hours: Long): Duration = new Duration(hours = Hours(hours))
+  def minutes(minutes: Long): Duration = new Duration(minutes = Minutes(minutes))
+  def seconds(seconds: Long): Duration = new Duration(seconds = Seconds(seconds))
+  def milliseconds(milliseconds: Long): Duration = new Duration(milliseconds = Milliseconds(milliseconds))
 
 }
 
