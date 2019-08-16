@@ -5,10 +5,12 @@ enablePlugins(GitBranchPrompt)
 
 git.uncommittedSignifier := Some("DIRTY")
 
+scalaVersion := "2.13.0"
+
 lazy val scalatime = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/).in(file("."))
   .settings(
-    scalaVersion := "2.12.7",
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.5" % "test",
+    scalaVersion := "2.13.0",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.8" % "test",
     organization := "no.skytteren",
   )
   .jvmSettings(

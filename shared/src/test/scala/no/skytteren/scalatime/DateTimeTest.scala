@@ -17,16 +17,6 @@ class DateTimeTest extends FunSuite{
     assert(!DateTime(Year(2100), Month(1), DayOfMonth(1)).isLeapYear)
   }
 
-  test("DateTime add nothing") {
-    val date = DateTime(Year(1900), Month(1), DayOfMonth(1))
-    assert(date === date + ())
-  }
-
-  test("DateTime remove nothing") {
-    val date = DateTime(Year(1900), Month(1), DayOfMonth(1))
-    assert(date === date - ())
-  }
-
   test("DateTime add year") {
     val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + (years = Years(1))
     assert(date === DateTime(Year(1901), Month(1), DayOfMonth(1)))

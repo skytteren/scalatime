@@ -17,16 +17,6 @@ class ZonedDateTimeTest extends FunSuite{
     assert(!ZonedDateTime(Year(2100), Month(1), DayOfMonth(1)).isLeapYear)
   }
 
-  test("ZonedDateTime add nothing") {
-    val date = ZonedDateTime(Year(1900), Month(1), DayOfMonth(1))
-    assert(date === date + ())
-  }
-
-  test("ZonedDateTime remove nothing") {
-    val date = ZonedDateTime(Year(1900), Month(1), DayOfMonth(1))
-    assert(date === date - ())
-  }
-
   test("ZonedDateTime add year") {
     val date = ZonedDateTime(Year(1900), Month(1), DayOfMonth(1)) + (years = Years(1))
     assert(date === ZonedDateTime(Year(1901), Month(1), DayOfMonth(1)))

@@ -89,5 +89,6 @@ object BiNumeric{
     override def toFloat(x: A): Float = numericB.toFloat(fab(x))
     override def toDouble(x: A): Double = numericB.toDouble(fab(x))
     override def compare(x: A, y: A): Int = numericB.compare(fab(x), fab(y))
+    override def parseString(str: String): Option[A] = numericB.parseString(str).map(fba)
   }
 }
