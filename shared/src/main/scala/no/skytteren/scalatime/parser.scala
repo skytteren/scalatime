@@ -75,6 +75,7 @@ object TimeParser {
   case class NotATimeException(pattern: String) extends Throwable{
     override def getMessage: String = s""""$pattern" can not be recognized as a time"""
   }
+
   implicit case object ISO8601 extends TimeParser {
     /**
       * hh:mm:ss.sss	or	hhmmss.sss
@@ -82,16 +83,20 @@ object TimeParser {
       * hh:mm	or	hhmm
       * hh
       */
-    private val full = """(\d{2}):(\d{2}):(\d{2}).(\d{3})""".r
-    private val fullSimple = """(\d{2})(\d{2})(\d{2}).(\d{3})""".r
+    private val full = """(\d{2}):(\d{2}):(\d{2}).(\d{1,3})""".r
+    private val fullSimple = """(\d{2})(\d{2})(\d{2}).(\d{1,3})""".r
     private val seconds = """(\d{2}):(\d{2}):(\d{2})""".r
     private val secondsSimple = """(\d{2})(\d{2})(\d{2})""".r
     private val minutes = """(\d{2}):(\d{2})""".r
     private val minutesSimple = """(\d{2})(\d{2})""".r
     private val hours = """(\d{2})""".r
     override def parse(in: String): Try[Time] = in match {
-      case full(hour, minute, second, millis) => Try{Time(Hour(hour.toInt), Minute(minute.toInt), Second(second.toInt), Millisecond(millis.toInt))}
-      case fullSimple(hour, minute, second, millis) => Try{Time(Hour(hour.toInt), Minute(minute.toInt), Second(second.toInt), Millisecond(millis.toInt))}
+      case full(hour, minute, second, millis) =>
+        val milliseconds = millis.toInt * Math.pow(10, 3 - millis.length).toInt
+        Try{Time(Hour(hour.toInt), Minute(minute.toInt), Second(second.toInt), Millisecond(milliseconds))}
+      case fullSimple(hour, minute, second, millis) =>
+        val milliseconds = millis.toInt * Math.pow(10, 3 - millis.length).toInt
+        Try{Time(Hour(hour.toInt), Minute(minute.toInt), Second(second.toInt), Millisecond(milliseconds))}
       case seconds(hour, minute, second) => Try{Time(Hour(hour.toInt), Minute(minute.toInt), Second(second.toInt))}
       case secondsSimple(hour, minute, second) => Try{Time(Hour(hour.toInt), Minute(minute.toInt), Second(second.toInt))}
       case minutes(hour, minute) => Try{Time(Hour(hour.toInt), Minute(minute.toInt))}
