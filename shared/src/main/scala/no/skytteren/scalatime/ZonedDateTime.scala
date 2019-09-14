@@ -2,6 +2,8 @@ package no.skytteren.scalatime
 
 import scala.util.Try
 
+import implicits._
+
 case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: DayOfMonth = DayOfMonth(1),
                     hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second = Second(0), millisecond: Millisecond = Millisecond(0),
                        offset: Offset = Offset.Z) {
@@ -18,7 +20,6 @@ case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMon
   def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
         hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)
        ): ZonedDateTime = {
-    import Days.numericDays._
 
     val (extraDays, Time(hour, minute, second, millisecond)) = this.toTime plusOverflow (hours, minutes, seconds, milliseconds)
     val Date(year, month, dayOfMonth) = this.toDate + (years, months, days + extraDays)
@@ -34,6 +35,22 @@ case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMon
   def -(duration: Duration): ZonedDateTime = {
     import duration._
     this - (years, months, days, hours, minutes, seconds, milliseconds)
+  }
+
+  def < (to: ZonedDateTime): Boolean = {
+    (toDate < to.toDate) || ((toDate == to.toDate) && (toTime < to.toTime))
+  }
+
+  def <= (to: ZonedDateTime): Boolean = {
+    this < to  || this == to
+  }
+
+  def > (to: ZonedDateTime): Boolean = {
+    !(this < to || this == to)
+  }
+
+  def >= (to: ZonedDateTime): Boolean = {
+    !(this < to)
   }
 
   def year(year: Year): ZonedDateTime = copy(year = year)
@@ -53,7 +70,6 @@ case class ZonedDateTime(year: Year = Year(0), month: Month = Month(1), dayOfMon
   def toDateTime: DateTime = DateTime(year, month, dayOfMonth, hour, minute, second, millisecond)
 
   def toEpochSecond: Seconds = {
-    import Numeric.Implicits._
     val daysSeconds = (toDate.toDays - ZonedDateTime.epochStart.toDate.toDays).toSeconds
     val daySeconds = Seconds(hour.value * 60 * 60 + minute.value * 60 + second.value)
     daysSeconds + daySeconds

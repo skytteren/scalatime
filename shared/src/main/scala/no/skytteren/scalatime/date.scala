@@ -1,6 +1,7 @@
 package no.skytteren.scalatime
 
 import scala.util.Try
+import implicits._
 
 case class Year(value: Long) extends AnyVal {
   def isLeapYear: Boolean = {
@@ -10,9 +11,7 @@ case class Year(value: Long) extends AnyVal {
 
 object Year extends (Long => Year) {
 
-  def apply(l: Int): Year = new Year(l.toLong)
-
-  implicit val numericYear: Numeric[Year] = BiNumeric.numeric[Year, Long](_.value, Year)
+  implicit val numericYear: Ordering[Year] = Ordering.by[Year, Long](_.value)
 }
 
 sealed abstract class Month(val value: Short, val daysInMonth: Year => Days)  {
@@ -23,7 +22,7 @@ sealed abstract class Month(val value: Short, val daysInMonth: Year => Days)  {
 
 object Month extends (Short => Month) {
 
-  implicit val numericMonth: Numeric[Month] = BiNumeric.numeric[Month, Short](_.value, Month)
+  implicit val numericMonth: Ordering[Month] = Ordering.by[Month, Short](_.value)
 
   case class NotFound(value: Int) extends Exception
 
@@ -58,9 +57,14 @@ object Month extends (Short => Month) {
 
 case class DayOfMonth(value: Short)  {
   require(value >= 1 && value <= 31, s"DayOfMonth must be in the range [1, 31], but was $value")
+
+  def <(other: DayOfMonth) = Ordering[DayOfMonth].lt(this, other)
+  def <=(other: DayOfMonth) = Ordering[DayOfMonth].lteq(this, other)
+  def >(other: DayOfMonth) = Ordering[DayOfMonth].gt(this, other)
+  def >=(other: DayOfMonth) = Ordering[DayOfMonth].gteq(this, other)
 }
 object DayOfMonth extends (Short => DayOfMonth) {
-  implicit val numericDayOfMonth: Numeric[DayOfMonth] = BiNumeric.numeric[DayOfMonth, Short](_.value, DayOfMonth)
+  implicit val numericDayOfMonth: Ordering[DayOfMonth] = Ordering.by[DayOfMonth, Short](_.value)
 
   def apply(l: Long): DayOfMonth = DayOfMonth(l.toShort)
   def apply(l: Int): DayOfMonth = DayOfMonth(l.toShort)
@@ -105,16 +109,30 @@ case class DayOfYear(value: Short)  {
 object DayOfYear extends (Short => DayOfYear) {
   def apply(l: Long): DayOfYear = new DayOfYear(l.toShort)
   def apply(l: Int): DayOfYear = new DayOfYear(l.toShort)
+  implicit val numericDayOfYear: Ordering[DayOfYear] = Ordering.by[DayOfYear, Short](_.value)
 }
 
 case class YearDay(year: Year, dayOfYear: DayOfYear)
 
-case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
-
-  def +(duration: Duration): Date = {
-    import duration._
-    this + (years, months, days)
+trait DateDuration[T]{
+  def duration(t: T): (Years, Months, Days)
+}
+object DateDuration{
+  implicit object YearsDuration extends DateDuration[Years] {
+    def duration(years: Years): (Years, Months, Days) = (years, Months(0), Days(0))
   }
+  implicit object MonthsDuration extends DateDuration[Months] {
+    def duration(months: Months): (Years, Months, Days) = (Years(0), months, Days(0))
+  }
+  implicit object DaysDuration extends DateDuration[Days] {
+    def duration(days: Days): (Years, Months, Days) = (Years(0), Months(0), days)
+  }
+  implicit object DurationDuration extends DateDuration[Duration] {
+    def duration(duration: Duration): (Years, Months, Days) = (duration.years, duration.months, duration.days)
+  }
+}
+
+case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
 
   def toDays: Days = {
     val m : Long = (month.value + 9) % 12
@@ -122,8 +140,12 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
     Days(365 * y + y / 4 - y / 100 + y / 400 + (m * 306 + 5) / 10 + (dayOfMonth.value - 1))
   }
 
-  def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0)): Date = {
-    import Days.numericDays._
+  def +[D: DateDuration](duration: D): Date = {
+    val (years, months, days) = implicitly[DateDuration[D]].duration(duration)
+    this + (years, months, days)
+  }
+
+  private[scalatime] def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0)): Date = {
 
     val (y, m, d) = Date.toDate(toDays + days)
 
@@ -137,23 +159,23 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
   def isLeapYear = year.isLeapYear
 
 
-  def -(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0)): Date = {
+  private[scalatime] def -(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0)): Date = {
     this + (-years, -months, -days)
   }
 
-  def -(duration: Duration): Date = {
-    import duration._
+  def -[D: DateDuration](duration: D): Date = {
+    val (years, months, days) = implicitly[DateDuration[D]].duration(duration)
     this - (years, months, days)
   }
 
   def < (other: Date): Boolean = Date.DateOrdering.lt(this, other)
+  def <= (other: Date): Boolean = Date.DateOrdering.lteq(this, other)
   def > (other: Date): Boolean = Date.DateOrdering.gt(this, other)
+  def >= (other: Date): Boolean = Date.DateOrdering.gteq(this, other)
 
   //def until(other: Date): Days = other.toDays - this.toDays
 
   def until(to: Date): Duration = {
-    import Ordered._
-
     if(this > to) {
       to.until(this)
     } else {
@@ -165,7 +187,6 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
       } else {
         Days(to.dayOfMonth.value - dayOfMonth.value) -> 0
       }
-
 
       val (months: Months, incrementYear: Int) = if ((month.value + incrementMonth) > to.month.value) {
         Months(to.month.value + 12 - (month.value + incrementMonth)) -> 1
@@ -191,13 +212,13 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
 
   def format(implicit formater: DateFormat): String = formater.format(this)
 
-  implicit val dateOrdering: Ordering[Date] = Ordering.by(_.toDays)
+  implicit val dateOrdering: Ordering[Date] = Ordering.by[Date, Days](_.toDays)
 }
 
 object Date extends ((Year, Month, DayOfMonth) => Date){
 
   implicit object DateOrdering extends Ordering[Date] {
-    override def compare(x: Date, y: Date): Int = Days.numericDays.compare(x.toDays, y.toDays)
+    override def compare(x: Date, y: Date): Int = x.toDays.value compare y.toDays.value
   }
 
   def parse(in: String)(implicit dateParser: DateParser): Try[Date] = dateParser.parse(in)

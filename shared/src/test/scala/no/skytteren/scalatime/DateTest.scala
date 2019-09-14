@@ -1,6 +1,7 @@
 package no.skytteren.scalatime
 
-import org.scalatest.{FunSpec, FunSuite}
+import org.scalatest.FunSuite
+import implicits._
 
 class DateTest extends FunSuite{
 
@@ -18,32 +19,32 @@ class DateTest extends FunSuite{
   }
 
   test("Date add year") {
-    val date = Date(Year(1900), Month(1), DayOfMonth(1)) + (years = Years(1))
+    val date = Date(Year(1900), Month(1), DayOfMonth(1)) + 1.years
     assert(date === Date(Year(1901), Month(1), DayOfMonth(1)))
   }
 
   test("Date remove year") {
-    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - (years = Years(1))
+    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - 1.years
     assert(date === Date(Year(1999), Month(1), DayOfMonth(1)))
   }
 
   test("Date add month") {
-    val date = Date(Year(1900), Month(1), DayOfMonth(1)) + (months = Months(1))
+    val date = Date(Year(1900), Month(1), DayOfMonth(1)) + 1.months
     assert(date === Date(Year(1900), Month(2), DayOfMonth(1)))
   }
 
   test("Date remove month") {
-    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - (months = Months(1))
+    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - 1l.months
     assert(date === Date(Year(1999), Month(12), DayOfMonth(1)))
   }
 
   test("Date add days") {
-    val date = Date(Year(1900), Month(1), DayOfMonth(1)) + (days = Days(41))
+    val date = Date(Year(1900), Month(1), DayOfMonth(1)) + 41.days
     assert(date === Date(Year(1900), Month(2), DayOfMonth(11)))
   }
 
   test("Date remove days") {
-    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - (days = Days(41))
+    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - 41.days
     assert(date === Date(Year(1999), Month(11), DayOfMonth(21)))
   }
 
@@ -61,7 +62,7 @@ class DateTest extends FunSuite{
     for{
       i <- 0 until 1000
     } {
-      val date = start + (days = Days(i))
+      val date = start + Days(i)
       assert(date.dayOfWeek === DayOfWeek(i % 7 + 1))
     }
   }
@@ -82,7 +83,6 @@ class DateTest extends FunSuite{
   }
 
   test("Date compare") {
-    import Ordering.Implicits._
     val start = Date(Year(2018), Month(11), DayOfMonth(8))
     assert(start < Date(Year(2018), Month(11), DayOfMonth(9)))
   }

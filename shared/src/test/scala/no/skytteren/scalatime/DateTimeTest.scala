@@ -18,32 +18,32 @@ class DateTimeTest extends FunSuite{
   }
 
   test("DateTime add year") {
-    val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + (years = Years(1))
+    val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + Years(1)
     assert(date === DateTime(Year(1901), Month(1), DayOfMonth(1)))
   }
 
   test("DateTime remove year") {
-    val date = DateTime(Year(2000), Month(1), DayOfMonth(1)) - (years = Years(1))
+    val date = DateTime(Year(2000), Month(1), DayOfMonth(1)) - Years(1)
     assert(date === DateTime(Year(1999), Month(1), DayOfMonth(1)))
   }
 
   test("DateTime add month") {
-    val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + (months = Months(1))
+    val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + Months(1)
     assert(date === DateTime(Year(1900), Month(2), DayOfMonth(1)))
   }
 
   test("DateTime remove month") {
-    val date = DateTime(Year(2000), Month(1), DayOfMonth(1)) - (months = Months(1))
+    val date = DateTime(Year(2000), Month(1), DayOfMonth(1)) - Months(1)
     assert(date === DateTime(Year(1999), Month(12), DayOfMonth(1)))
   }
 
   test("DateTime add days") {
-    val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + (days = Days(41))
+    val date = DateTime(Year(1900), Month(1), DayOfMonth(1)) + Days(41)
     assert(date === DateTime(Year(1900), Month(2), DayOfMonth(11)))
   }
 
   test("DateTime remove days") {
-    val date = DateTime(Year(2000), Month(1), DayOfMonth(1)) - (days = Days(41))
+    val date = DateTime(Year(2000), Month(1), DayOfMonth(1)) - Days(41)
     assert(date === DateTime(Year(1999), Month(11), DayOfMonth(21)))
   }
 

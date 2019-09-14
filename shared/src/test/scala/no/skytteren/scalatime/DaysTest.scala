@@ -1,14 +1,20 @@
 package no.skytteren.scalatime
 
 import org.scalatest.FunSuite
+import implicits._
 
 class DaysTest extends FunSuite {
 
-  import Days.numericDays._
-
-  test("Days must be numeric") {
-    assert(Days(15) === Days(10) + Days(5))
+  test("Days must add") {
+    assert(15.days === 10.days + 5.days)
   }
 
+  test("Days must subtract") {
+    assert(5.days === 10.days - 5.days)
+  }
+
+  test("Days is weeks") {
+    assert(Duration(days = 35.days) === 5.weeks)
+  }
 
 }

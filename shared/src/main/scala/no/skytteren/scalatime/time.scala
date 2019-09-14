@@ -61,10 +61,35 @@ object Millisecond extends (Short => Millisecond) {
   def apply(value: Long): Millisecond = new Millisecond(value.toShort)
 }
 
+trait TimeDuration[T]{
+  def duration(t: T): (Hours, Minutes, Seconds, Milliseconds)
+}
+
+object TimeDuration{
+  implicit object HoursDuration extends TimeDuration[Hours]{
+    override def duration(hours: Hours): (Hours, Minutes, Seconds, Milliseconds) = (hours, Minutes(0), Seconds(0), Milliseconds(0))
+  }
+  implicit object MinutesDuration extends TimeDuration[Minutes]{
+    override def duration(minutes: Minutes): (Hours, Minutes, Seconds, Milliseconds) = (Hours(0), minutes, Seconds(0), Milliseconds(0))
+  }
+  implicit object SecondsDuration extends TimeDuration[Seconds]{
+    override def duration(seconds: Seconds): (Hours, Minutes, Seconds, Milliseconds) = (Hours(0), Minutes(0), seconds, Milliseconds(0))
+  }
+  implicit object MillisecondsDuration extends TimeDuration[Milliseconds]{
+    override def duration(milliseconds: Milliseconds): (Hours, Minutes, Seconds, Milliseconds) = (Hours(0), Minutes(0), Seconds(0), milliseconds)
+  }
+  implicit object DurationDuration extends TimeDuration[Duration]{
+    override def duration(d: Duration): (Hours, Minutes, Seconds, Milliseconds) = {
+      import d._
+      (hours, minutes, seconds, milliseconds)
+    }
+  }
+}
+
 case class Time(hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second = Second(0), millisecond: Millisecond = Millisecond(0)){
 
-  def +(duration: Duration): Time = {
-    import duration._
+  def +[D: TimeDuration](duration: D): Time = {
+    val (hours, minutes, seconds, milliseconds) = implicitly[TimeDuration[D]].duration(duration)
     this + (hours, minutes, seconds, milliseconds)
   }
 
@@ -87,17 +112,17 @@ case class Time(hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second
     )
   }
 
-  def +(hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)): Time = {
+  private[scalatime] def +(hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)): Time = {
     plusOverflow(hours, minutes, seconds, milliseconds)._2
   }
 
-  def -(hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)): Time = {
+  private[scalatime] def -(hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)): Time = {
 
     this + (-hours, -minutes, -seconds, -milliseconds)
   }
 
-  def -(duration: Duration): Time = {
-    import duration._
+  def -[D: TimeDuration](duration: D): Time = {
+    val (hours, minutes, seconds, milliseconds) = implicitly[TimeDuration[D]].duration(duration)
     this - (hours, minutes, seconds, milliseconds)
   }
 

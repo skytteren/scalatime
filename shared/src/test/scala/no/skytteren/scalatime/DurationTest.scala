@@ -1,11 +1,12 @@
 package no.skytteren.scalatime
 
 import org.scalatest.FunSuite
+import implicits._
 
 class DurationTest extends FunSuite{
 
   test("Duration ") {
-    assert(Duration.days(5) === Duration(days = Days(5)))
+    assert(5.days.duration === Duration(days = Days(5)))
   }
 
 

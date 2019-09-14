@@ -3,6 +3,8 @@ package no.skytteren.scalatime
 import no.skytteren.scalatime.Month.NotFound
 import org.scalatest.FunSuite
 
+import implicits._
+
 class MonthTest extends FunSuite {
 
   test("Month must be between 1 and 12") {
@@ -28,7 +30,7 @@ class MonthTest extends FunSuite {
 
   test( "all months") {
     val year = Year(2018)
-    assert(Month.all.map(_.daysInMonth(year)).sum === Days(365))
+    assert(Month.all.map(_.daysInMonth(year)).fold(0.days)(_ + _) === Days(365))
 
   }
 

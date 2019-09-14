@@ -1,6 +1,27 @@
 package no.skytteren.scalatime
 
 import scala.util.Try
+import implicits._
+
+trait DateTimeDuration[T]{
+  def duration(t: T): (Years, Months, Days, Hours, Minutes, Seconds, Milliseconds)
+}
+
+object DateTimeDuration{
+  implicit def dateDuration[T: DateDuration]: DateTimeDuration[T] = (t: T) => {
+    val (years, months, days) = implicitly[DateDuration[T]].duration(t)
+    (years, months, days, Hours(0), Minutes(0), Seconds(0), Milliseconds(0))
+  }
+  implicit def timeDuration[T: TimeDuration]: DateTimeDuration[T] = (t: T) => {
+    val (hours, minutes, seconds, milliseconds) = implicitly[TimeDuration[T]].duration(t)
+    (Years(0), Months(0), Days(9), hours, minutes, seconds, milliseconds)
+  }
+  implicit def durationDuration: DateTimeDuration[Duration] = (d: Duration) => {
+      import d._
+      (years, months, days, hours, minutes, seconds, milliseconds)
+    }
+
+}
 
 case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: DayOfMonth = DayOfMonth(1),
                     hour: Hour = Hour(0), minute: Minute = Minute(0), second: Second = Second(0), millisecond: Millisecond = Millisecond(0)) {
@@ -8,15 +29,14 @@ case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: D
 
   def format(implicit formater: DateTimeFormat): String = formater.format(this)
 
-  def +(duration: Duration): DateTime = {
-    import duration._
+  def +[D: DateTimeDuration](duration: D): DateTime = {
+    val (years, months, days, hours, minutes, seconds, milliseconds) = implicitly[DateTimeDuration[D]].duration(duration)
     this + (years, months, days, hours, minutes, seconds, milliseconds)
   }
 
-  def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
+  private[scalatime] def +(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
         hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)
        ): DateTime = {
-    import Days.numericDays._
 
     val (extraDays, Time(hour, minute, second, millisecond)) = this.toTime plusOverflow (hours, minutes, seconds, milliseconds)
     val Date(year, month, dayOfMonth) = this.toDate + (years, months, days + extraDays)
@@ -25,19 +45,20 @@ case class DateTime(year: Year = Year(0), month: Month = Month(1), dayOfMonth: D
   }
 
 
-  def -(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
+  private[scalatime] def -(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),
         hours: Hours = Hours(0), minutes: Minutes = Minutes(0), seconds: Seconds = Seconds(0), milliseconds: Milliseconds = Milliseconds(0)): DateTime = {
     this + (-years, -months, -days, -hours, -minutes, -seconds, -milliseconds)
   }
 
-  def -(duration: Duration): DateTime = {
-    import duration._
+  def -[D: DateTimeDuration](duration: D): DateTime = {
+    val (years, months, days, hours, minutes, seconds, milliseconds) = implicitly[DateTimeDuration[D]].duration(duration)
     this - (years, months, days, hours, minutes, seconds, milliseconds)
   }
 
-  def < (to: DateTime): Boolean = {
-    (toDate < to.toDate) || ((toDate == to.toDate) && (toTime < to.toTime))
-  }
+  def < (to: DateTime): Boolean = Ordering[DateTime].lt(this, to)
+  def <= (to: DateTime): Boolean = Ordering[DateTime].lteq(this, to)
+  def > (to: DateTime): Boolean = Ordering[DateTime].gt(this, to)
+  def >= (to: DateTime): Boolean = Ordering[DateTime].gteq(this, to)
 
   def year(year: Year): DateTime = copy(year = year)
   def month(month: Month): DateTime = copy(month = month)

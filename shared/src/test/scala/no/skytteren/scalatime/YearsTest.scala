@@ -1,13 +1,16 @@
 package no.skytteren.scalatime
 
 import org.scalatest.FunSuite
+import implicits._
 
 class YearsTest extends FunSuite {
 
-  import Years.numeric._
+  test("Years must add") {
+    assert(15.years === 10.years + 5.years)
+  }
 
-  test("Months must be numeric") {
-    assert(Years(15) === Years(10) + Years(5))
+  test("Years must subtract") {
+    assert(5.years === 10.years - 5.years)
   }
 
 
