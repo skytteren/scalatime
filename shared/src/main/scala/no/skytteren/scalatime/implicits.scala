@@ -13,6 +13,17 @@ object implicits {
     def milliseconds: Milliseconds = Milliseconds(l)
   }
 
+  implicit class IntDuration(val i: Int) extends AnyVal {
+    def years: Years = Years(i)
+    def months: Months = Months(i)
+    def days: Days = Days(i)
+    def weeks: Duration = Duration(days = (i*7).days)
+    def hours: Hours = Hours(i)
+    def minutes: Minutes = Minutes(i)
+    def seconds: Seconds = Seconds(i)
+    def milliseconds: Milliseconds = Milliseconds(i)
+  }
+
   implicit class YearsPimp(val theseYears: Years) extends AnyVal {
     def + (years: Years): Years = Years(years.value + theseYears.value)
     def + (months: Months): Duration = Duration(months = months, years = theseYears)

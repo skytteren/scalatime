@@ -13,5 +13,9 @@ class YearsTest extends FunSuite {
     assert(5.years === 10.years - 5.years)
   }
 
+  test("Years must compare") {
+    assert(10.years >= 5.years)
+  }
+
 
 }

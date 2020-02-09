@@ -2,16 +2,33 @@ package no.skytteren.scalatime
 
 case class Years(value: Long){
   def unary_- = Years(-value)
+  def <(other: Years): Boolean = value < other.value
+  def <=(other: Years): Boolean = value <= other.value
+  def >=(other: Years): Boolean = value >= other.value
+  def >(other: Years): Boolean = value > other.value
+}
+object Years extends (Long => Years){
+  implicit val orderingYears: Ordering[Years] = Ordering.by[Years, Long](_.value)
 }
 
 case class Months(value: Long){
   def unary_- = Months(-value)
+  def <(other: Months): Boolean = value < other.value
+  def <=(other: Months): Boolean = value <= other.value
+  def >=(other: Months): Boolean = value >= other.value
+  def >(other: Months): Boolean = value > other.value
 }
+object Months extends (Long => Months){
+  implicit val orderingMonths: Ordering[Months] = Ordering.by[Months, Long](_.value)
+}
+
 
 case class Days(value: Long){
   def unary_- = Days(-value)
-
-  def - (other: Days) = Days(value - other.value)
+  def <(other: Days): Boolean = value < other.value
+  def <=(other: Days): Boolean = value <= other.value
+  def >=(other: Days): Boolean = value >= other.value
+  def >(other: Days): Boolean = value > other.value
 
   def toSeconds: Seconds = Seconds(value * 24 * 60 * 60)
 }
@@ -22,13 +39,20 @@ object Days extends (Long => Days) {
 
 case class Hours(value: Long){
   def unary_- = Hours(-value)
+  def <(other: Hours): Boolean = value < other.value
+  def <=(other: Hours): Boolean = value <= other.value
+  def >=(other: Hours): Boolean = value >= other.value
+  def >(other: Hours): Boolean = value > other.value
   def toSeconds: Seconds = Seconds(value * 60 * 60)
 
 }
 
 case class Minutes(value: Long){
   def unary_- = Minutes(-value)
-
+  def <(other: Minutes): Boolean = value < other.value
+  def <=(other: Minutes): Boolean = value <= other.value
+  def >=(other: Minutes): Boolean = value >= other.value
+  def >(other: Minutes): Boolean = value > other.value
   def toSeconds: Seconds = Seconds(value * 60)
 }
 object Minutes extends (Long => Minutes) {
@@ -37,6 +61,10 @@ object Minutes extends (Long => Minutes) {
 
 case class Seconds(value: Long){
   def unary_- = Seconds(-value)
+  def <(other: Seconds): Boolean = value < other.value
+  def <=(other: Seconds): Boolean = value <= other.value
+  def >=(other: Seconds): Boolean = value >= other.value
+  def >(other: Seconds): Boolean = value > other.value
 }
 object Seconds extends (Long => Seconds) {
   implicit val secondsOrdering = Ordering.by[Seconds, Long](_.value)
@@ -44,6 +72,10 @@ object Seconds extends (Long => Seconds) {
 
 case class Milliseconds(value: Long){
   def unary_- = Milliseconds(-value)
+  def <(other: Milliseconds): Boolean = value < other.value
+  def <=(other: Milliseconds): Boolean = value <= other.value
+  def >=(other: Milliseconds): Boolean = value >= other.value
+  def >(other: Milliseconds): Boolean = value > other.value
 }
 
 object Milliseconds extends (Long => Milliseconds) {
@@ -55,4 +87,5 @@ case class Duration(years: Years = Years(0), months: Months = Months(0), days: D
 
   def format(implicit durationFormat: DurationFormat): String = durationFormat.format(this)
 }
+
 

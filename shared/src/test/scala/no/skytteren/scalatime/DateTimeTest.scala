@@ -49,14 +49,14 @@ class DateTimeTest extends FunSuite{
 
   test("DateTime plus milliseconds") {
     val time = DateTime(millisecond = Millisecond(999))
-    val newTime = time + (milliseconds = Milliseconds(10))
+    val newTime = time + Milliseconds(10)
     assert(newTime.second === Second(1))
     assert(newTime.millisecond === Millisecond(9))
   }
 
   test("DateTime plus lots of milliseconds") {
     val time = DateTime(millisecond = Millisecond(0))
-    val newTime = time + (milliseconds = Milliseconds(1000000))
+    val newTime = time + Milliseconds(1000000)
     assert(newTime.hour === Hour(0))
     assert(newTime.minute === Minute(16))
     assert(newTime.second === Second(40))
@@ -65,21 +65,21 @@ class DateTimeTest extends FunSuite{
 
   test("DateTime plus seconds") {
     val time = DateTime(second = Second(59))
-    val newTime = time + (seconds = Seconds(10))
+    val newTime = time + Seconds(10)
     assert(newTime.minute === Minute(1))
     assert(newTime.second === Second(9))
   }
 
   test("DateTime plus minutes") {
     val time = DateTime(minute = Minute(59))
-    val newTime = time + (minutes = Minutes(10))
+    val newTime = time + Minutes(10)
     assert(newTime.hour === Hour(1))
     assert(newTime.minute === Minute(9))
   }
 
   test("DateTime plus hours") {
     val time = DateTime(hour = Hour(12))
-    val newTime = time + (hours = Hours(12))
+    val newTime = time + Hours(12)
     assert(newTime.hour === Hour(0))
   }
 
