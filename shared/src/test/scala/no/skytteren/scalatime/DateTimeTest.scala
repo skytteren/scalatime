@@ -93,4 +93,24 @@ class DateTimeTest extends FunSuite{
     assert(date === DateTime(Year(2018), Month(11), DayOfMonth(9), Hour(12), Minute(13), Second(14), Millisecond(678)))
   }
 
+
+  test("Compare < to equal datetimes"){
+    val date1 = DateTime.parse("20181109T12:13:14.678").get
+    val date2 = DateTime.parse("20181109T12:13:14.678").get
+    assert(! (date1 < date2))
+    assert(! (date1 > date2))
+  }
+
+  test("Compare < to different datetimes"){
+      val date1 = DateTime.parse("20181109T12:13:14.678").get
+      val date2 = DateTime.parse("20181109T12:13:14.679").get
+      assert(date1 < date2)
+      assert(! (date1 > date2))
+  }
+
+  test("Subtract time"){
+        val date1 = DateTime.parse("20181109T12:13:14.678").get - Minutes(15)
+        val date2 = DateTime.parse("20181109T11:58:14.678").get
+        assert(date1 == date2)
+  }
 }

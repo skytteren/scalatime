@@ -14,7 +14,7 @@ object DateTimeDuration{
   }
   implicit def timeDuration[T: TimeDuration]: DateTimeDuration[T] = (t: T) => {
     val (hours, minutes, seconds, milliseconds) = implicitly[TimeDuration[T]].duration(t)
-    (Years(0), Months(0), Days(9), hours, minutes, seconds, milliseconds)
+    (Years(0), Months(0), Days(0), hours, minutes, seconds, milliseconds)
   }
   implicit def durationDuration: DateTimeDuration[Duration] = (d: Duration) => {
       import d._
@@ -86,6 +86,6 @@ object DateTime extends ((Year, Month, DayOfMonth, Hour, Minute, Second, Millise
   def MAX: DateTime = DateTime(Date.MAX, Time.MAX)
   def MIN: DateTime =  DateTime(Date.MIN, Time.MIN)
 
-  implicit val datatimeOrdering: Ordering[DateTime] = Ordering.by(_.toEpochSecond())
+  implicit val datatimeOrdering: Ordering[DateTime] = Ordering.by(dateTime => dateTime.toEpochSecond.value * 1000 + dateTime.millisecond.value)
 
 }
