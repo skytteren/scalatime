@@ -13,3 +13,5 @@ Leap seconds are also out of scope (which it is for most libraries).
 Please read the test to learn the API.
 
 THIS CODE IS NOT PRODUCTION READY. USE WITH CARE!
+
+To improve stacktraces in Scala.js `npm install source-map-support`
