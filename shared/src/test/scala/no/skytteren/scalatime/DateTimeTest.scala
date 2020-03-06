@@ -1,8 +1,8 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class DateTimeTest extends FunSuite {
+class DateTimeTest extends AnyFunSuite {
 
   test("Date leap year") {
     assert(DateTime(Year(1600), Month(1), DayOfMonth(1)).isLeapYear)

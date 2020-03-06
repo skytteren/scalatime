@@ -1,9 +1,9 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import implicits._
 
-class YearsTest extends FunSuite {
+class YearsTest extends AnyFunSuite {
 
   test("Years must add") {
     assert(15.years === 10.years + 5.years)

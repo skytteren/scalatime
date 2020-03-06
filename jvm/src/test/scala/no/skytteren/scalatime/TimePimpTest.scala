@@ -1,8 +1,8 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class TimePimpTest extends FunSuite {
+class TimePimpTest extends AnyFunSuite {
 
   test("Time now") {
     val time = Time.now()

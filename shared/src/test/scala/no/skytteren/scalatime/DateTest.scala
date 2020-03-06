@@ -1,9 +1,9 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import implicits._
 
-class DateTest extends FunSuite{
+class DateTest extends AnyFunSuite{
 
   test("Date leap year") {
     assert(Date(Year(1600), Month(1), DayOfMonth(1)).isLeapYear)
@@ -34,7 +34,7 @@ class DateTest extends FunSuite{
   }
 
   test("Date remove month") {
-    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - 1l.months
+    val date = Date(Year(2000), Month(1), DayOfMonth(1)) - 1L.months
     assert(date === Date(Year(1999), Month(12), DayOfMonth(1)))
   }
 

@@ -1,8 +1,8 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class DayOfWeekTest extends FunSuite {
+class DayOfWeekTest extends AnyFunSuite {
 
   test("DayOfWeek must be between 1 and 7") {
     for(

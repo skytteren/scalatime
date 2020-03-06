@@ -1,11 +1,11 @@
 package no.skytteren.scalatime
 
 import no.skytteren.scalatime.Month.NotFound
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 import implicits._
 
-class MonthTest extends FunSuite {
+class MonthTest extends AnyFunSuite {
 
   test("Month must be between 1 and 12") {
     for(

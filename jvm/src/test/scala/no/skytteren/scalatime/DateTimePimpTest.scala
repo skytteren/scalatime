@@ -2,9 +2,9 @@ package no.skytteren.scalatime
 
 import java.time.ZoneOffset
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class DateTimePimpTest extends FunSuite {
+class DateTimePimpTest extends AnyFunSuite {
 
   test("DateTime now") {
     val dateTime = DateTime.now()

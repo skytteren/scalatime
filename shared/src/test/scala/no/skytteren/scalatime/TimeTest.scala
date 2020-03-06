@@ -1,9 +1,9 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import implicits._
 
-class TimeTest extends FunSuite {
+class TimeTest extends AnyFunSuite {
 
   test("Time plus milliseconds") {
     val time = Time(millisecond = Millisecond(999))

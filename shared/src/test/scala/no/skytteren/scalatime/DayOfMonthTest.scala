@@ -1,8 +1,8 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class DayOfMonthTest extends FunSuite {
+class DayOfMonthTest extends AnyFunSuite {
 
   test("DayOfMonth must be between 1 and 31") {
     for(

@@ -1,10 +1,10 @@
 package no.skytteren.scalatime
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import implicits._
 import Ordered._
 
-class DaysTest extends FunSuite {
+class DaysTest extends AnyFunSuite {
 
   test("Days must add") {
     assert(15.days === 10.days + 5.days)
