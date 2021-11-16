@@ -56,7 +56,7 @@ case class Minutes(value: Long){
   def toSeconds: Seconds = Seconds(value * 60)
 }
 object Minutes extends (Long => Minutes) {
-  implicit val minutesOrdering = Ordering.by[Minutes, Long](_.value)
+  implicit val minutesOrdering: Ordering[Minutes] = Ordering.by[Minutes, Long](_.value)
 }
 
 case class Seconds(value: Long){
@@ -67,7 +67,7 @@ case class Seconds(value: Long){
   def >(other: Seconds): Boolean = value > other.value
 }
 object Seconds extends (Long => Seconds) {
-  implicit val secondsOrdering = Ordering.by[Seconds, Long](_.value)
+  implicit val secondsOrdering: Ordering[Seconds] = Ordering.by[Seconds, Long](_.value)
 }
 
 case class Milliseconds(value: Long){
@@ -79,7 +79,7 @@ case class Milliseconds(value: Long){
 }
 
 object Milliseconds extends (Long => Milliseconds) {
-  implicit val millisecondsOrdering = Ordering.by[Milliseconds, Long](_.value)
+  implicit val millisecondsOrdering: Ordering[Milliseconds] = Ordering.by[Milliseconds, Long](_.value)
 }
 
 case class Duration(years: Years = Years(0), months: Months = Months(0), days: Days = Days(0),

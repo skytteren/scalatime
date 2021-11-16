@@ -3,13 +3,13 @@ package no.skytteren.scalatime
 import scala.util.Try
 import implicits._
 
-case class Year(value: Long) extends AnyVal {
+case class Year(value: Int) extends AnyVal {
   def isLeapYear: Boolean = {
     value % 4 == 0 && (value % 100 != 0 || value % 400 == 0)
   }
 }
 
-object Year extends (Long => Year) {
+object Year extends (Int => Year) {
 
   implicit val numericYear: Ordering[Year] = Ordering.by[Year, Long](_.value)
 }

@@ -5,14 +5,14 @@ enablePlugins(GitBranchPrompt)
 
 git.uncommittedSignifier := Some("DIRTY")
 
-scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "0.27.0-RC1"
 
 lazy val scalatime = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/).in(file("."))
   .settings(
-    scalaVersion := "2.13.3",
-    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.1.1" % "test",
+    libraryDependencies += ("org.scalatest" %%% "scalatest" % "3.1.1" % "test").withDottyCompat(scalaVersion.value),
     organization := "no.skytteren",
     scalacOptions += "-deprecation",
+    scalacOptions ++= { if (isDotty.value) Seq("-source:3.0-migration") else Nil },
   )
   .jvmSettings(
     fork in Test := true,

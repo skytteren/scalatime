@@ -11,5 +11,5 @@ case class Offset(hours: Hours, minutes: Minutes = Minutes(0)) {
   }
 }
 object Offset {
-  implicit val Z = Offset(Hours(0))
+  implicit val Z: Offset = Offset(Hours(0))
 }

@@ -5,7 +5,7 @@ package object scalatime {
   implicit class DatePimp(date: Date.type) {
     def now(): Date = {
       val jDate = new scalajs.js.Date()
-      Date(Year(jDate.getFullYear().toLong), Month(jDate.getMonth().toShort + 1), DayOfMonth(jDate.getDate().toShort))
+      Date(Year(jDate.getFullYear().toInt), Month(jDate.getMonth().toShort + 1), DayOfMonth(jDate.getDate().toShort))
     }
   }
 
@@ -20,7 +20,7 @@ package object scalatime {
     def now(): DateTime = {
       val jDateTime = new scalajs.js.Date()
       new DateTime(
-        Year(jDateTime.getFullYear().toLong), Month(jDateTime.getMonth().toShort + 1), DayOfMonth(jDateTime.getDate().toShort),
+        Year(jDateTime.getFullYear()), Month(jDateTime.getMonth().toShort + 1), DayOfMonth(jDateTime.getDate().toShort),
         Hour(jDateTime.getHours.toShort), Minute(jDateTime.getMinutes.toShort), Second(jDateTime.getSeconds.toShort), Millisecond(jDateTime.getMilliseconds().toShort)
       )
     }
