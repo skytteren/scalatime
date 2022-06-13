@@ -5,20 +5,22 @@ enablePlugins(GitBranchPrompt)
 
 git.uncommittedSignifier := Some("DIRTY")
 
-ThisBuild / scalaVersion := "0.27.0-RC1"
+ThisBuild / scalaVersion := "3.1.2"
 
 lazy val scalatime = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/).in(file("."))
   .settings(
-    libraryDependencies += ("org.scalatest" %%% "scalatest" % "3.1.1" % "test").withDottyCompat(scalaVersion.value),
+    libraryDependencies += ("org.scalatest" %%% "scalatest" % "3.2.12" % "test"),
     organization := "no.skytteren",
     scalacOptions += "-deprecation",
-    scalacOptions ++= { if (isDotty.value) Seq("-source:3.0-migration") else Nil },
+    scalacOptions ++= Seq(
+      "-source:3.0-migration",
+      "-rewrite"
+    )
   )
   .jvmSettings(
-    fork in Test := true,
-    showTiming in Test := true,
+    Test / fork := true,
   )
 
-lazy val scalatimeJS     = scalatime.js
-lazy val scalatimeJVM    = scalatime.jvm
+lazy val scalatimeJS = scalatime.js
+lazy val scalatimeJVM = scalatime.jvm
 //lazy val barNative = bar.native

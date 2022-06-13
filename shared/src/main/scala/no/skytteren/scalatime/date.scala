@@ -3,13 +3,13 @@ package no.skytteren.scalatime
 import scala.util.Try
 import implicits._
 
-case class Year(value: Int) extends AnyVal {
+case class Year(value: Long) extends AnyVal {
   def isLeapYear: Boolean = {
     value % 4 == 0 && (value % 100 != 0 || value % 400 == 0)
   }
 }
 
-object Year extends (Int => Year) {
+object Year extends (Long => Year) {
 
   implicit val numericYear: Ordering[Year] = Ordering.by[Year, Long](_.value)
 }
@@ -151,7 +151,7 @@ case class Date(year: Year, month: Month, dayOfMonth: DayOfMonth){
 
     val newMonth = (m.value - 1 + months.value) % 12 + 1
 
-    val newYear = y.value + years.value + months.value / 12
+    val newYear: Long = y.value + years.value + months.value / 12
 
     Date(Year(if(newMonth < 1) newYear - 1 else newYear), Month(if(newMonth < 1) newMonth + 12 else newMonth), d)
   }

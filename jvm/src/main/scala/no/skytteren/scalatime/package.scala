@@ -24,7 +24,7 @@ package object scalatime {
   implicit class DateTimePimp(datetime: DateTime) {
     def toJavaLocalDateTime: LocalDateTime = {
       LocalDateTime.of(
-        datetime.year.value, datetime.month.value.toInt, datetime.dayOfMonth.value.toInt,
+        datetime.year.value.toInt, datetime.month.value.toInt, datetime.dayOfMonth.value.toInt,
         datetime.hour.value.toInt, datetime.minute.value, datetime.second.value, datetime.millisecond.value * 1000000
       )
     }
