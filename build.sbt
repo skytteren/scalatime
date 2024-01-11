@@ -5,7 +5,7 @@ enablePlugins(GitBranchPrompt)
 
 git.uncommittedSignifier := Some("DIRTY")
 
-ThisBuild / scalaVersion := "3.1.2"
+ThisBuild / scalaVersion := "3.3.1"
 
 lazy val scalatime = crossProject(JSPlatform, JVMPlatform /*, NativePlatform*/).in(file("."))
   .settings(
